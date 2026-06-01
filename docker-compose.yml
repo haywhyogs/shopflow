@@ -1,0 +1,23 @@
+version: "3.9"
+
+services:
+
+  catalogue:
+    build: ./catalogue
+    container_name: catalogue
+    ports:
+      - "6001:5001"
+
+  checkout:
+    build: ./checkout
+    container_name: checkout
+    ports:
+      - "6002:5002"
+    depends_on:
+      - catalogue
+
+  notifications:
+    build: ./notifications
+    container_name: notifications
+    ports:
+      - "6003:5003"
