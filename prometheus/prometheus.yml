@@ -1,0 +1,15 @@
+global:
+  scrape_interval: 5s
+
+scrape_configs:
+  - job_name: 'catalogue'
+    static_configs:
+      - targets: ['catalogue:5001']
+
+  - job_name: 'checkout'
+    static_configs:
+      - targets: ['checkout:5002']
+
+  - job_name: 'notifications'
+    static_configs:
+      - targets: ['notifications:5003']
