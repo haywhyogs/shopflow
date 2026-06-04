@@ -23,6 +23,11 @@ REQUEST_LATENCY = Histogram(
     'HTTP request latency',
     ['endpoint']
 )
+
+@app.route("/favicon.ico")
+def favicon():
+    return "", 204
+
 @app.before_request
 def start_timer():
     g.start_time = time.time()
