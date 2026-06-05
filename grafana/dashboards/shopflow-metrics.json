@@ -104,6 +104,180 @@
         }
       }
     },
+    "panel-10": {
+      "kind": "Panel",
+      "spec": {
+        "data": {
+          "kind": "QueryGroup",
+          "spec": {
+            "queries": [
+              {
+                "kind": "PanelQuery",
+                "spec": {
+                  "hidden": false,
+                  "query": {
+                    "datasource": {
+                      "name": "afo0ztsdi641sf"
+                    },
+                    "group": "prometheus",
+                    "kind": "DataQuery",
+                    "spec": {
+                      "editorMode": "code",
+                      "expr": "(sum(increase(http_requests_total{status=~\"5..\"}[$__range])) or vector(0)) \r\n/ \r\nsum(increase(http_requests_total[$__range]))",
+                      "legendFormat": "__auto",
+                      "range": true
+                    },
+                    "version": "v0"
+                  },
+                  "refId": "A"
+                }
+              }
+            ],
+            "queryOptions": {},
+            "transformations": []
+          }
+        },
+        "description": "",
+        "id": 10,
+        "links": [],
+        "title": "Server Error Rate",
+        "vizConfig": {
+          "group": "stat",
+          "kind": "VizConfig",
+          "spec": {
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "palette-classic"
+                },
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": 0
+                    },
+                    {
+                      "color": "red",
+                      "value": 0.01
+                    }
+                  ]
+                },
+                "unit": "percentunit"
+              },
+              "overrides": []
+            },
+            "options": {
+              "colorMode": "background_solid",
+              "graphMode": "none",
+              "justifyMode": "auto",
+              "orientation": "auto",
+              "percentChangeColorMode": "standard",
+              "reduceOptions": {
+                "calcs": [
+                  "lastNotNull"
+                ],
+                "fields": "",
+                "values": false
+              },
+              "showPercentChange": false,
+              "textMode": "auto",
+              "wideLayout": true
+            }
+          },
+          "version": "13.0.2"
+        }
+      }
+    },
+    "panel-11": {
+      "kind": "Panel",
+      "spec": {
+        "data": {
+          "kind": "QueryGroup",
+          "spec": {
+            "queries": [
+              {
+                "kind": "PanelQuery",
+                "spec": {
+                  "hidden": false,
+                  "query": {
+                    "datasource": {
+                      "name": "afo0ztsdi641sf"
+                    },
+                    "group": "prometheus",
+                    "kind": "DataQuery",
+                    "spec": {
+                      "editorMode": "code",
+                      "expr": "1 - (\r\n  (sum(increase(http_requests_total{status=~\"5..\"}[$__range])) or vector(0))\r\n  /\r\n  sum(increase(http_requests_total[$__range]))\r\n)",
+                      "legendFormat": "__auto",
+                      "range": true
+                    },
+                    "version": "v0"
+                  },
+                  "refId": "A"
+                }
+              }
+            ],
+            "queryOptions": {},
+            "transformations": []
+          }
+        },
+        "description": "",
+        "id": 11,
+        "links": [],
+        "title": "Availability (Uptime)",
+        "vizConfig": {
+          "group": "stat",
+          "kind": "VizConfig",
+          "spec": {
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "palette-classic"
+                },
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": 0
+                    },
+                    {
+                      "color": "red",
+                      "value": 95
+                    },
+                    {
+                      "color": "#EAB839",
+                      "value": 99
+                    }
+                  ]
+                },
+                "unit": "percentunit"
+              },
+              "overrides": []
+            },
+            "options": {
+              "colorMode": "background_solid",
+              "graphMode": "none",
+              "justifyMode": "auto",
+              "orientation": "auto",
+              "percentChangeColorMode": "standard",
+              "reduceOptions": {
+                "calcs": [
+                  "lastNotNull"
+                ],
+                "fields": "",
+                "values": false
+              },
+              "showPercentChange": false,
+              "textMode": "auto",
+              "wideLayout": true
+            }
+          },
+          "version": "13.0.2"
+        }
+      }
+    },
     "panel-2": {
       "kind": "Panel",
       "spec": {
@@ -220,7 +394,7 @@
         "description": "",
         "id": 3,
         "links": [],
-        "title": "Error Rate",
+        "title": "Client Error Rate",
         "vizConfig": {
           "group": "stat",
           "kind": "VizConfig",
@@ -239,7 +413,7 @@
                     },
                     {
                       "color": "red",
-                      "value": 0.1
+                      "value": 0.05
                     }
                   ]
                 },
@@ -861,7 +1035,7 @@
                     "spec": {
                       "element": {
                         "kind": "ElementReference",
-                        "name": "panel-1"
+                        "name": "panel-11"
                       },
                       "height": 3,
                       "width": 4,
@@ -968,9 +1142,35 @@
                         "kind": "ElementReference",
                         "name": "panel-6"
                       },
-                      "height": 9,
-                      "width": 18,
+                      "height": 8,
+                      "width": 9,
                       "x": 0,
+                      "y": 0
+                    }
+                  },
+                  {
+                    "kind": "GridLayoutItem",
+                    "spec": {
+                      "element": {
+                        "kind": "ElementReference",
+                        "name": "panel-10"
+                      },
+                      "height": 8,
+                      "width": 5,
+                      "x": 9,
+                      "y": 0
+                    }
+                  },
+                  {
+                    "kind": "GridLayoutItem",
+                    "spec": {
+                      "element": {
+                        "kind": "ElementReference",
+                        "name": "panel-1"
+                      },
+                      "height": 8,
+                      "width": 5,
+                      "x": 14,
                       "y": 0
                     }
                   },
@@ -981,9 +1181,9 @@
                         "kind": "ElementReference",
                         "name": "panel-3"
                       },
-                      "height": 9,
-                      "width": 6,
-                      "x": 18,
+                      "height": 8,
+                      "width": 5,
+                      "x": 19,
                       "y": 0
                     }
                   }
@@ -1023,7 +1223,7 @@
       "1d"
     ],
     "fiscalYearStartMonth": 0,
-    "from": "now-12h",
+    "from": "now-1h",
     "hideTimepicker": false,
     "timezone": "browser",
     "to": "now"
@@ -1036,8 +1236,8 @@
         "allValue": ".*",
         "allowCustomValue": true,
         "current": {
-          "text": "checkout",
-          "value": "checkout"
+          "text": "All",
+          "value": "$__all"
         },
         "definition": "label_values(job)",
         "hide": "dontHide",
