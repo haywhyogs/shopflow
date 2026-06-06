@@ -56,6 +56,7 @@ NOTIFICATIONS_URL = "http://notifications:5003"
 @app.get("/checkout/<product_id>")
 def checkout(product_id):
     try:
+  
         print(f"[CHECKOUT] Order placed for product {product_id}", flush=True)
         response = requests.get(f"{CATALOGUE_URL}/products/{product_id}")
         if response.status_code != 200:
@@ -63,6 +64,7 @@ def checkout(product_id):
         product = response.json()
         requests.post(f"{NOTIFICATIONS_URL}/notify", json={"product_id": product_id})
         ORDERS_PROCESSED.inc()
+        
         return {"message": "Order placed", "product": product}
     except Exception as e:
         return {"error": str(e)}, 500
