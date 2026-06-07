@@ -1,0 +1,49 @@
+groups:
+  - name: app-alerts
+    rules:
+
+      - alert: CheckoutHighLatency
+        expr: |
+          histogram_quantile(0.95,
+            sum by (le, endpoint)(
+              rate(http_request_duration_seconds_bucket{job="checkout"}[5m])
+            )
+          ) > 0.3
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Checkout p95 latency above 300ms"
+          description: "p95 latency is {{ $value | humanizeDuration }} on {{ $labels.endpoint }}"
+
+      - alert: HighErrorRate
+        expr: |
+          sum(rate(http_requests_total{status=~"5.."}[5m]))
+          /
+          sum(rate(http_requests_total[5m])) > 0.01
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Error rate above 1%"
+          description: "Current error rate is {{ $value | humanizePercentage }}"
+
+      - alert: LowAvailability
+        expr: |
+          1 - (
+          sum(rate(http_requests_total{status=~"5.."}[5m]))
+          /
+          sum(rate(http_requests_total[5m]))
+          ) < 0.999
+        for: 2m
+        labels:
+          severity: critical
+
+      - alert: ServiceDown
+        expr: up == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Service {{ $labels.job }} is down"
+          description: "{{ $labels.job }} has been unreachable for over 1 minute"

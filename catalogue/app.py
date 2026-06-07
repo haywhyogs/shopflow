@@ -2,10 +2,32 @@ from flask import Flask, jsonify, Response, g, request
 from prometheus_client import Counter, Histogram, generate_latest, CONTENT_TYPE_LATEST
 import time
 import requests
+from opentelemetry import trace
+from opentelemetry.sdk.trace import TracerProvider
+from opentelemetry.sdk.trace.export import BatchSpanProcessor
+from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
+from opentelemetry.sdk.resources import Resource
+from opentelemetry.instrumentation.flask import FlaskInstrumentor
+from opentelemetry.instrumentation.requests import RequestsInstrumentor
 
 app = Flask(__name__)
 
+provider = TracerProvider(
+    resource=Resource.create({"service.name": "catalogue"})  
+)
+provider.add_span_processor(
+    BatchSpanProcessor(OTLPSpanExporter(endpoint="http://jaeger:4317"))
+)
+trace.set_tracer_provider(provider)
+
+RequestsInstrumentor().instrument()
+
 EXCLUDED_PATHS = {'/metrics', '/health', '/ready'}
+
+FlaskInstrumentor().instrument_app(
+    app,
+    excluded_urls="health,ready,metrics"
+)
 
 PRODUCTS = {
     "1": {"id": "1", "name": "Keyboard", "price": 50, "stock": 10},
