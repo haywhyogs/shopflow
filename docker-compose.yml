@@ -5,10 +5,14 @@ services:
   catalogue:
     build: ./catalogue
     container_name: catalogue
+    networks:
+      - shopflow-net
 
   checkout:
     build: ./checkout
     container_name: checkout
+    networks:
+      - shopflow-net
     ports:
       - "6002:5002"
     depends_on:
@@ -17,10 +21,14 @@ services:
   notifications:
     build: ./notifications
     container_name: notifications
+    networks:
+      - shopflow-net
   
   jaeger:
     image: jaegertracing/all-in-one:latest
     container_name: jaeger
+    networks:
+      - shopflow-net
     ports:
       - "16686:16686"  # Jaeger UI
       - "4317:4317"    # OTLP gRPC receiver
@@ -28,6 +36,8 @@ services:
   prometheus:
     image: prom/prometheus
     container_name: prometheus
+    networks:
+      - shopflow-net
     ports:
       - "9090:9090"
     volumes:
@@ -35,12 +45,35 @@ services:
   grafana:
     image: grafana/grafana
     container_name: grafana
+    networks:
+      - shopflow-net
     ports:
       - "3000:3000"
     depends_on:
       - prometheus
     volumes:
     - grafana-data:/var/lib/grafana
+  
+  loki:
+    image: grafana/loki:2.9.0
+    container_name: loki
+    networks:
+      - shopflow-net
+    ports:
+      - "3100:3100"
+    command: -config.file=/etc/loki/local-config.yaml
+
+  promtail:
+    image: grafana/promtail:latest
+    container_name: promtail
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./promtail/promtail-config.yaml:/etc/promtail/config.yaml
+    command: -config.file=/etc/promtail/config.yaml
+    networks:
+    - shopflow-net
 volumes:
   grafana-data:
 
+networks:
+  shopflow-net:

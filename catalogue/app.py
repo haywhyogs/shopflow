@@ -9,6 +9,11 @@ from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExport
 from opentelemetry.sdk.resources import Resource
 from opentelemetry.instrumentation.flask import FlaskInstrumentor
 from opentelemetry.instrumentation.requests import RequestsInstrumentor
+import logging
+from opentelemetry.trace import get_current_span
+
+logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO)
 
 app = Flask(__name__)
 
@@ -78,6 +83,10 @@ def get_products():
 
 @app.get("/products/<product_id>")
 def get_product(product_id):
+    span = get_current_span()
+    trace_id = format(span.get_span_context().trace_id, "032x")
+    logger.info(f"Product lookup | trace_id={trace_id} | product_id={product_id}")
+    
     print(f"[CATALOGUE] Fetch product {product_id}",flush=True)
     product = PRODUCTS.get(product_id)
     if not product:

@@ -9,7 +9,11 @@ from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExport
 from opentelemetry.sdk.resources import Resource
 from opentelemetry.instrumentation.flask import FlaskInstrumentor
 from opentelemetry.instrumentation.requests import RequestsInstrumentor
+import logging
+from opentelemetry.trace import get_current_span
 
+logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO)
 app = Flask(__name__)
 
 provider = TracerProvider(
@@ -70,6 +74,10 @@ def metrics():
 
 @app.post("/notify")
 def notify():
+    span = get_current_span()
+    trace_id = format(span.get_span_context().trace_id, "032x")
+    logger.info(f"Notification received | trace_id={trace_id}")
+    
     print("[NOTIFICATIONS] Notification sent", flush=True)
     return {"status": "notification sent"}
 

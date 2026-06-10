@@ -9,6 +9,12 @@ from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExport
 from opentelemetry.sdk.resources import Resource
 from opentelemetry.instrumentation.flask import FlaskInstrumentor
 from opentelemetry.instrumentation.requests import RequestsInstrumentor
+import logging
+import random
+from opentelemetry.trace import get_current_span
+
+logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO)
 
 EXCLUDED_PATHS = {'/metrics', '/health', '/ready'}
 
@@ -78,6 +84,10 @@ NOTIFICATIONS_URL = "http://notifications:5003"
 @app.get("/checkout/<product_id>")
 def checkout(product_id):
     try:
+        span = get_current_span()
+        trace_id = format(span.get_span_context().trace_id, "032x")
+
+        logger.info(f"Processing checkout | trace_id={trace_id} | product_id={product_id}")
   
         print(f"[CHECKOUT] Order placed for product {product_id}", flush=True)
         response = requests.get(f"{CATALOGUE_URL}/products/{product_id}")
