@@ -36,7 +36,7 @@
                   "hidden": false,
                   "query": {
                     "datasource": {
-                      "name": "afo0ztsdi641sf"
+                      "name": "Prometheus"
                     },
                     "group": "prometheus",
                     "kind": "DataQuery",
@@ -117,7 +117,7 @@
                   "hidden": false,
                   "query": {
                     "datasource": {
-                      "name": "afo0ztsdi641sf"
+                      "name": "Prometheus"
                     },
                     "group": "prometheus",
                     "kind": "DataQuery",
@@ -202,7 +202,7 @@
                   "hidden": false,
                   "query": {
                     "datasource": {
-                      "name": "afo0ztsdi641sf"
+                      "name": "Prometheus"
                     },
                     "group": "prometheus",
                     "kind": "DataQuery",
@@ -291,7 +291,7 @@
                   "hidden": false,
                   "query": {
                     "datasource": {
-                      "name": "afo0ztsdi641sf"
+                      "name": "Prometheus"
                     },
                     "group": "prometheus",
                     "kind": "DataQuery",
@@ -371,7 +371,7 @@
                   "hidden": false,
                   "query": {
                     "datasource": {
-                      "name": "afo0ztsdi641sf"
+                      "name": "Prometheus"
                     },
                     "group": "prometheus",
                     "kind": "DataQuery",
@@ -456,7 +456,7 @@
                   "hidden": false,
                   "query": {
                     "datasource": {
-                      "name": "afo0ztsdi641sf"
+                      "name": "Prometheus"
                     },
                     "group": "prometheus",
                     "kind": "DataQuery",
@@ -541,7 +541,7 @@
                   "hidden": false,
                   "query": {
                     "datasource": {
-                      "name": "afo0ztsdi641sf"
+                      "name": "Prometheus"
                     },
                     "group": "prometheus",
                     "kind": "DataQuery",
@@ -660,7 +660,7 @@
                   "hidden": false,
                   "query": {
                     "datasource": {
-                      "name": "afo0ztsdi641sf"
+                      "name": "Prometheus"
                     },
                     "group": "prometheus",
                     "kind": "DataQuery",
@@ -742,7 +742,7 @@
                   "hidden": false,
                   "query": {
                     "datasource": {
-                      "name": "afo0ztsdi641sf"
+                      "name": "Prometheus"
                     },
                     "group": "prometheus",
                     "kind": "DataQuery",
@@ -827,7 +827,7 @@
                   "hidden": false,
                   "query": {
                     "datasource": {
-                      "name": "afo0ztsdi641sf"
+                      "name": "Prometheus"
                     },
                     "group": "prometheus",
                     "kind": "DataQuery",
@@ -911,7 +911,7 @@
                   "hidden": false,
                   "query": {
                     "datasource": {
-                      "name": "afo0ztsdi641sf"
+                      "name": "Prometheus"
                     },
                     "group": "prometheus",
                     "kind": "DataQuery",
@@ -1248,7 +1248,7 @@
         "options": [],
         "query": {
           "datasource": {
-            "name": "afo0ztsdi641sf"
+            "name": "Prometheus"
           },
           "group": "prometheus",
           "kind": "DataQuery",
