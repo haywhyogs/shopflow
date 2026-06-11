@@ -33,4 +33,4 @@ runcmd:
     echo "GRAFANA_PASSWORD=${GRAFANA_PASSWORD}" >> /home/azureuser/shopflow/.env
 
   # Start the stack
-  - cd /home/azureuser/shopflow && docker compose -f docker-compose.cloud.yml up -d
+  - cd /home/azureuser/shopflow && docker compose -f docker-compose-cloud.yml up -d
