@@ -5,10 +5,12 @@ package_upgrade: true
 packages:
   - docker.io
   - docker-compose-v2
-  - azure-cli
+  - curl
   - git
 
 runcmd:
+  # Install Azure CLI properly
+  - curl -sL https://aka.ms/InstallAzureCLIDeb | bash
   # Start Docker
   - systemctl enable docker
   - systemctl start docker
