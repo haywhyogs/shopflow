@@ -1,6 +1,6 @@
 services:
   catalogue:
-    image: shopflowacr.azurecr.io/catalogue:v1.0.0
+    image: shopflowacr.azurecr.io/catalogue:v1
     container_name: catalogue
     environment:
       - AZURE_MONITOR_CONNECTION_STRING=${AZURE_MONITOR_CONNECTION_STRING}
@@ -9,7 +9,7 @@ services:
       - shopflow-net
 
   checkout:
-    image: shopflowacr.azurecr.io/checkout:v1.0.0
+    image: shopflowacr.azurecr.io/checkout:v1
     container_name: checkout
     ports:
       - "6002:5002"
@@ -25,7 +25,7 @@ services:
       - shopflow-net
 
   notifications:
-    image: shopflowacr.azurecr.io/notifications:v1.0.0
+    image: shopflowacr.azurecr.io/notifications:v1
     container_name: notifications
     environment:
       - AZURE_MONITOR_CONNECTION_STRING=${AZURE_MONITOR_CONNECTION_STRING}
