@@ -1,0 +1,34 @@
+#cloud-config
+package_update: true
+package_upgrade: true
+
+packages:
+  - docker.io
+  - docker-compose-v2
+  - azure-cli
+  - git
+
+runcmd:
+  # Start Docker
+  - systemctl enable docker
+  - systemctl start docker
+  - usermod -aG docker azureuser
+
+  # Login to ACR via Managed Identity
+  - az login --identity
+  - az acr login --name shopflowacr
+
+  # Clone repo
+  - git clone https://github.com/<your-github-haywhyogs/shopflow.git /home/azureuser/shopflow
+  - chown -R azureuser:azureuser /home/azureuser/shopflow
+
+  # Fetch secrets from Key Vault
+  - |
+    GRAFANA_PASSWORD=$(az keyvault secret show \
+      --vault-name shopflow-kv \
+      --name grafana-admin-password \
+      --query value -o tsv)
+    echo "GRAFANA_PASSWORD=${GRAFANA_PASSWORD}" >> /home/azureuser/shopflow/.env
+
+  # Start the stack
+  - cd /home/azureuser/shopflow && docker compose -f docker-compose.cloud.yml up -d

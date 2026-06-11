@@ -10,7 +10,7 @@ from opentelemetry.sdk.resources import Resource
 from opentelemetry.instrumentation.flask import FlaskInstrumentor
 from opentelemetry.instrumentation.requests import RequestsInstrumentor
 import logging
-import random
+import os
 from opentelemetry.trace import get_current_span
 
 logger = logging.getLogger(__name__)
@@ -39,11 +39,23 @@ ORDERS_PROCESSED = Counter(
 app = Flask(__name__)
 
 provider = TracerProvider(
-    resource=Resource.create({"service.name": "checkout"}) 
+    resource=Resource.create({"service.name": "checkout"})
 )
+# Jaeger — always on locally
 provider.add_span_processor(
-    BatchSpanProcessor(OTLPSpanExporter(endpoint="http://jaeger:4317"))
+    BatchSpanProcessor(OTLPSpanExporter(endpoint=os.getenv("JAEGER_ENDPOINT", "http://jaeger:4317")))
 )
+
+# Azure Monitor — only active when connection string is set
+# Azure Monitor — only active when connection string is set
+azure_connection_string = os.getenv("AZURE_MONITOR_CONNECTION_STRING")
+if azure_connection_string:
+    from azure.monitor.opentelemetry.exporter import AzureMonitorTraceExporter
+    provider.add_span_processor(
+        BatchSpanProcessor(
+            AzureMonitorTraceExporter(connection_string=azure_connection_string)
+        )
+    )
 trace.set_tracer_provider(provider)
 
 FlaskInstrumentor().instrument_app(

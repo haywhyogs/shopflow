@@ -5,3 +5,4 @@ opentelemetry-sdk
 opentelemetry-instrumentation-flask
 opentelemetry-instrumentation-requests
 opentelemetry-exporter-otlp-proto-grpc
+azure-monitor-opentelemetry-exporter==1.0.0b21
