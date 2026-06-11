@@ -21,7 +21,7 @@ runcmd:
   - az acr login --name shopflowacr
 
   # Clone repo
-  - git clone https://github.com/github-haywhyogs/shopflow.git /home/azureuser/shopflow
+  - git clone https://github.com/haywhyogs/shopflow.git /home/azureuser/shopflow
   - chown -R azureuser:azureuser /home/azureuser/shopflow
 
   # Fetch secrets from Key Vault
