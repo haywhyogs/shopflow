@@ -9,9 +9,7 @@
         "iconColor": "rgba(0, 211, 255, 1)",
         "name": "Annotations & Alerts",
         "query": {
-          "datasource": {
-            "name": "-- Grafana --"
-          },
+          "datasource": {"type": "prometheus", "uid": "prometheus"},
           "group": "grafana",
           "kind": "DataQuery",
           "spec": {},
@@ -35,9 +33,7 @@
                 "spec": {
                   "hidden": false,
                   "query": {
-                    "datasource": {
-                      "name": "Prometheus"
-                    },
+                    "datasource": {"type": "prometheus", "uid": "prometheus"},
                     "group": "prometheus",
                     "kind": "DataQuery",
                     "spec": {
@@ -116,9 +112,7 @@
                 "spec": {
                   "hidden": false,
                   "query": {
-                    "datasource": {
-                      "name": "Prometheus"
-                    },
+                    "datasource": {"type": "prometheus", "uid": "prometheus"},
                     "group": "prometheus",
                     "kind": "DataQuery",
                     "spec": {
@@ -201,9 +195,7 @@
                 "spec": {
                   "hidden": false,
                   "query": {
-                    "datasource": {
-                      "name": "Prometheus"
-                    },
+                    "datasource": {"type": "prometheus", "uid": "prometheus"},
                     "group": "prometheus",
                     "kind": "DataQuery",
                     "spec": {
@@ -290,9 +282,7 @@
                 "spec": {
                   "hidden": false,
                   "query": {
-                    "datasource": {
-                      "name": "Prometheus"
-                    },
+                    "datasource": {"type": "prometheus", "uid": "prometheus"},
                     "group": "prometheus",
                     "kind": "DataQuery",
                     "spec": {
@@ -370,9 +360,7 @@
                 "spec": {
                   "hidden": false,
                   "query": {
-                    "datasource": {
-                      "name": "Prometheus"
-                    },
+                    "datasource": {"type": "prometheus", "uid": "prometheus"},
                     "group": "prometheus",
                     "kind": "DataQuery",
                     "spec": {
@@ -455,9 +443,7 @@
                 "spec": {
                   "hidden": false,
                   "query": {
-                    "datasource": {
-                      "name": "Prometheus"
-                    },
+                    "datasource": {"type": "prometheus", "uid": "prometheus"},
                     "group": "prometheus",
                     "kind": "DataQuery",
                     "spec": {
@@ -540,9 +526,7 @@
                 "spec": {
                   "hidden": false,
                   "query": {
-                    "datasource": {
-                      "name": "Prometheus"
-                    },
+                    "datasource": {"type": "prometheus", "uid": "prometheus"},
                     "group": "prometheus",
                     "kind": "DataQuery",
                     "spec": {
@@ -659,9 +643,7 @@
                 "spec": {
                   "hidden": false,
                   "query": {
-                    "datasource": {
-                      "name": "Prometheus"
-                    },
+                    "datasource": {"type": "prometheus", "uid": "prometheus"},
                     "group": "prometheus",
                     "kind": "DataQuery",
                     "spec": {
@@ -741,9 +723,7 @@
                 "spec": {
                   "hidden": false,
                   "query": {
-                    "datasource": {
-                      "name": "Prometheus"
-                    },
+                    "datasource": {"type": "prometheus", "uid": "prometheus"},
                     "group": "prometheus",
                     "kind": "DataQuery",
                     "spec": {
@@ -826,9 +806,7 @@
                 "spec": {
                   "hidden": false,
                   "query": {
-                    "datasource": {
-                      "name": "Prometheus"
-                    },
+                    "datasource": {"type": "prometheus", "uid": "prometheus"},
                     "group": "prometheus",
                     "kind": "DataQuery",
                     "spec": {
@@ -910,9 +888,7 @@
                 "spec": {
                   "hidden": false,
                   "query": {
-                    "datasource": {
-                      "name": "Prometheus"
-                    },
+                    "datasource": {"type": "prometheus", "uid": "prometheus"},
                     "group": "prometheus",
                     "kind": "DataQuery",
                     "spec": {
@@ -1247,9 +1223,7 @@
         "name": "job",
         "options": [],
         "query": {
-          "datasource": {
-            "name": "Prometheus"
-          },
+          "datasource": {"type": "prometheus", "uid": "prometheus"},
           "group": "prometheus",
           "kind": "DataQuery",
           "spec": {
