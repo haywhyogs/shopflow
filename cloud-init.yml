@@ -17,7 +17,7 @@ runcmd:
   - usermod -aG docker azureuser
 
   # Login to ACR via Managed Identity
-  - az login --identity --username f1474648-9f6b-4410-8c42-d4c349940df6
+  - az login --identity --client-id f1474648-9f6b-4410-8c42-d4c349940df6
   - az acr login --name shopflowacr
 
   # Clone repo
