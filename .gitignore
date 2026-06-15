@@ -4,3 +4,10 @@ __pycache__/
 .venv/
 node_modules/
 *.log
+
+# Terraform
+terraform/.terraform/
+terraform/*.tfstate
+terraform/*.tfstate.backup
+terraform/.terraform.lock.hcl
+terraform/terraform.tfvars
