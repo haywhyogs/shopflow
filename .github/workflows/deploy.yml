@@ -1,0 +1,63 @@
+name: Build and Deploy ShopFlow
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Azure login via OIDC
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Login to ACR
+        run: |
+          az acr login --name ${{ secrets.ACR_NAME }}
+
+      - name: Set image tag
+        run: echo "IMAGE_TAG=${{ github.sha }}" >> $GITHUB_ENV
+
+      - name: Build and push catalogue
+        run: |
+          docker build -t ${{ secrets.ACR_LOGIN_SERVER }}/catalogue:${{ env.IMAGE_TAG }} ./catalogue
+          docker push ${{ secrets.ACR_LOGIN_SERVER }}/catalogue:${{ env.IMAGE_TAG }}
+
+      - name: Build and push checkout
+        run: |
+          docker build -t ${{ secrets.ACR_LOGIN_SERVER }}/checkout:${{ env.IMAGE_TAG }} ./checkout
+          docker push ${{ secrets.ACR_LOGIN_SERVER }}/checkout:${{ env.IMAGE_TAG }}
+
+      - name: Build and push notifications
+        run: |
+          docker build -t ${{ secrets.ACR_LOGIN_SERVER }}/notifications:${{ env.IMAGE_TAG }} ./notifications
+          docker push ${{ secrets.ACR_LOGIN_SERVER }}/notifications:${{ env.IMAGE_TAG }}
+
+      - name: Deploy to VM
+        run: |
+          az vm run-command invoke \
+            --resource-group shopflow-rg \
+            --name shopflow-vm \
+            --command-id RunShellScript \
+            --scripts "
+              cd /home/azureuser/shopflow
+              git pull
+              export IMAGE_TAG=${{ env.IMAGE_TAG }}
+              export ACR=${{ secrets.ACR_LOGIN_SERVER }}
+              az acr login --name ${{ secrets.ACR_NAME }} --identity
+              docker compose -f docker-compose-cloud.yml pull
+              docker compose -f docker-compose-cloud.yml up -d
+            "
