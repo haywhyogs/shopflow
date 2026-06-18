@@ -90,8 +90,8 @@ services:
       - shopflow-net
 
   networks:
-  shopflow-net:
-    driver: bridge
+    shopflow-net:
+      driver: bridge
 
   volumes:
     grafana_data:
