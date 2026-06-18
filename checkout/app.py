@@ -109,7 +109,7 @@ def checkout(product_id):
         requests.post(f"{NOTIFICATIONS_URL}/notify", json={"product_id": product_id})
         ORDERS_PROCESSED.inc()
         
-        return {"message": "Order placed", "product": product}
+        return {"message": "Order placed", "product": product, "version": "v2.0.0"}
     except Exception as e:
         return {"error": str(e)}, 500
 
