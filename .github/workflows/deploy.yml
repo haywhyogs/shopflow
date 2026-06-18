@@ -59,6 +59,7 @@ jobs:
              git pull && \
              export IMAGE_TAG=${{ env.IMAGE_TAG }} && \
              export ACR=${{ secrets.ACR_LOGIN_SERVER }} && \
+             az login --identity --client-id ${{ secrets.IDENTITY_CLIENT_ID }} && 
              az acr login --name ${{ secrets.ACR_NAME }} && \
              docker compose -f docker-compose-cloud.yml pull && \
              docker compose -f docker-compose-cloud.yml up -d"
