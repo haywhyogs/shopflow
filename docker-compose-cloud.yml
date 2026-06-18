@@ -61,8 +61,6 @@ services:
       - loki
     networks:
       - shopflow-net
-  volumes:
-    grafana_data:
 
   jaeger:
     image: jaegertracing/all-in-one:latest
@@ -91,6 +89,9 @@ services:
     networks:
       - shopflow-net
 
-networks:
+  networks:
   shopflow-net:
     driver: bridge
+
+  volumes:
+    grafana_data:
