@@ -12,6 +12,7 @@ from opentelemetry.instrumentation.requests import RequestsInstrumentor
 import logging
 import os
 from opentelemetry.trace import get_current_span
+import random
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
@@ -98,6 +99,10 @@ def checkout(product_id):
     try:
         span = get_current_span()
         trace_id = format(span.get_span_context().trace_id, "032x")
+
+         # Simulate latency spike
+        if random.random() < 0.8:
+            time.sleep(1.2)
 
         logger.info(f"Processing checkout | trace_id={trace_id} | product_id={product_id}")
   
