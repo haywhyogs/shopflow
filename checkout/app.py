@@ -29,7 +29,8 @@ REQUEST_COUNT = Counter(
 REQUEST_LATENCY = Histogram(
     'http_request_duration_seconds',
     'HTTP request latency',
-    ['endpoint']
+    ['endpoint'],
+    buckets=[0.05, 0.1, 0.2, 0.3, 0.5, 0.75, 1.0, 1.5, 2.0, 3.0, 5.0]
 )
 
 ORDERS_PROCESSED = Counter(
@@ -99,7 +100,7 @@ def checkout(product_id):
     try:
         if random.random() < 0.8:
             time.sleep(1.2)
-            
+
         span = get_current_span()
         trace_id = format(span.get_span_context().trace_id, "032x")
 
