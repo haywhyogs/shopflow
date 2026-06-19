@@ -100,11 +100,6 @@ def checkout(product_id):
         span = get_current_span()
         trace_id = format(span.get_span_context().trace_id, "032x")
 
-        # Simulate server errors
-        if random.random() < 0.3:
-            logger.error(f"Simulated server error | trace_id={trace_id} | product_id={product_id}")
-            return {"error": "Internal server error"}, 500
-
         logger.info(f"Processing checkout | trace_id={trace_id} | product_id={product_id}")
   
         print(f"[CHECKOUT] Order placed for product {product_id}", flush=True)
