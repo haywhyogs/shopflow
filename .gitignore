@@ -4,6 +4,8 @@ __pycache__/
 .venv/
 node_modules/
 *.log
+*.pem
+*.key
 
 # Terraform
 terraform/.terraform/
