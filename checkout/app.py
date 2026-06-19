@@ -98,8 +98,6 @@ NOTIFICATIONS_URL = "http://notifications:5003"
 @app.get("/checkout/<product_id>")
 def checkout(product_id):
     try:
-        if random.random() < 0.8:
-            time.sleep(1.2)
 
         span = get_current_span()
         trace_id = format(span.get_span_context().trace_id, "032x")
