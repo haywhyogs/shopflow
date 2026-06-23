@@ -1,7 +1,8 @@
 flask==3.0.0
 prometheus_client
 requests==2.31.0
-opentelemetry-sdk
-opentelemetry-instrumentation-flask
-opentelemetry-instrumentation-requests
-opentelemetry-exporter-otlp-proto-grpc
+opentelemetry-sdk==1.40.0
+opentelemetry-instrumentation-flask==0.61b0
+opentelemetry-instrumentation-requests==0.61b0
+opentelemetry-exporter-otlp-proto-grpc==1.40.0
+azure-monitor-opentelemetry-exporter==1.0.0b53

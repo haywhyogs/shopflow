@@ -49,7 +49,6 @@ provider.add_span_processor(
 )
 
 # Azure Monitor — only active when connection string is set
-# Azure Monitor — only active when connection string is set
 azure_connection_string = os.getenv("AZURE_MONITOR_CONNECTION_STRING")
 if azure_connection_string:
     from azure.monitor.opentelemetry.exporter import AzureMonitorTraceExporter
