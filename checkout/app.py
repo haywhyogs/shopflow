@@ -101,10 +101,6 @@ def checkout(product_id):
         span = get_current_span()
         trace_id = format(span.get_span_context().trace_id, "032x")
 
-        # Simulate latency spike — remove after testing
-        if random.random() < 0.8:
-            time.sleep(1.2)
-
         logger.info(f"Processing checkout | trace_id={trace_id} | product_id={product_id}")
   
         print(f"[CHECKOUT] Order placed for product {product_id}", flush=True)
