@@ -21,3 +21,9 @@ resource "azurerm_role_assignment" "kv_reader" {
   role_definition_name = "Key Vault Reader"
   principal_id         = azurerm_user_assigned_identity.main.principal_id
 }
+
+resource "azurerm_role_assignment" "terraform_kv_access" {
+  scope                = azurerm_key_vault.main.id
+  role_definition_name = "Key Vault Secrets Officer"
+  principal_id         = data.azurerm_client_config.current.object_id
+}

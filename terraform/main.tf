@@ -13,24 +13,22 @@ resource "azurerm_key_vault" "main" {
   enable_rbac_authorization   = true
 }
 
-resource "azurerm_key_vault_secret" "grafana_password" {
-  name         = "grafana-admin-password"
-  value        = "placeholder"
-  key_vault_id = azurerm_key_vault.main.id
-
-  tags = {
-    "file-encoding" = "utf-8"
-  }
-
-  lifecycle {
-    ignore_changes = [value, tags]
-  }
-}
-
 resource "azurerm_container_registry" "main" {
   name                = "shopflowacr"
   resource_group_name = azurerm_resource_group.main.name
   location            = azurerm_resource_group.main.location
   sku                 = "Basic"
   admin_enabled       = false
+}
+
+resource "azurerm_key_vault_secret" "grafana_password" {
+  name         = "grafana-admin-password"
+  value        = "placeholder"
+  key_vault_id = azurerm_key_vault.main.id
+
+  lifecycle {
+    ignore_changes = [value, tags]
+  }
+
+  depends_on = [azurerm_role_assignment.terraform_kv_access]
 }
