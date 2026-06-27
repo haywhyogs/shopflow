@@ -15,3 +15,8 @@ variable "project_name" {
   type        = string
   default     = "shopflow"
 }
+
+variable "github_actions_app_id" {
+  description = "App ID of the GitHub Actions service principal"
+  type        = string
+}
