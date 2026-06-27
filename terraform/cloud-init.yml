@@ -27,11 +27,11 @@ runcmd:
   # Fetch secrets from Key Vault
   - |
     GRAFANA_PASSWORD=$(az keyvault secret show \
-      --vault-name shopflow-kv \
+      --vault-name ${kv_name} \
       --name grafana-admin-password \
       --query value -o tsv)
-    echo "GRAFANA_PASSWORD=${GRAFANA_PASSWORD}" >> /home/azureuser/shopflow/.env
-    echo "ACR=shopflowacr.azurecr.io" >> /home/azureuser/shopflow/.env
+    echo "GRAFANA_PASSWORD=$${GRAFANA_PASSWORD}" >> /home/azureuser/shopflow/.env
+    echo "ACR=${acr_name}.azurecr.io" >> /home/azureuser/shopflow/.env
     echo "IMAGE_TAG=latest" >> /home/azureuser/shopflow/.env
 
   # Start the stack
@@ -40,10 +40,10 @@ runcmd:
   - |
     sleep 30
     GRAFANA_PASSWORD=$(az keyvault secret show \
-      --vault-name shopflow-kv \
+      --vault-name ${kv_name} \
       --name grafana-admin-password \
       --query value -o tsv)
     curl -s -X POST \
-      http://admin:${GRAFANA_PASSWORD}@localhost:3000/api/dashboards/db \
+      http://admin:$${GRAFANA_PASSWORD}@localhost:3000/api/dashboards/db \
       -H "Content-Type: application/json" \
       -d @/home/azureuser/shopflow/grafana/dashboards/shopflow-metrics.json
