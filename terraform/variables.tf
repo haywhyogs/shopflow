@@ -20,3 +20,9 @@ variable "github_actions_app_id" {
   description = "App ID of the GitHub Actions service principal"
   type        = string
 }
+
+variable "grafana_password" {
+  description = "Grafana admin password"
+  type        = string
+  sensitive   = true
+}

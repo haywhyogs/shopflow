@@ -23,12 +23,8 @@ resource "azurerm_container_registry" "main" {
 
 resource "azurerm_key_vault_secret" "grafana_password" {
   name         = "grafana-admin-password"
-  value        = "placeholder"
+  value        = var.grafana_password
   key_vault_id = azurerm_key_vault.main.id
-
-  lifecycle {
-    ignore_changes = [value, tags]
-  }
 
   depends_on = [azurerm_role_assignment.terraform_kv_access]
 }
