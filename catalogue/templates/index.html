@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="ShopFlow Electronics - Premium electronics storefront featuring top brands">
+    <title>ShopFlow Electronics | Premium Tech Store</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    {% macro product_card(product, featured=False) %}
+    <div class="product-card h-100 {% if featured %}featured{% endif %}">
+        <div class="product-image-wrapper">
+            <img src="{{ url_for('static', filename='images/' + product.image) }}"
+                 alt="{{ product.name }}"
+                 class="product-image img-fluid"
+                 loading="lazy">
+            <div class="product-overlay">
+                <button class="btn btn-primary btn-add-cart" data-product-id="{{ product.id }}" data-bs-toggle="tooltip" title="Add to Cart">
+                    <i class="bi bi-cart-plus"></i>
+                </button>
+            </div>
+        </div>
+        <div class="product-body d-flex flex-column">
+            <div class="product-meta mb-2">
+                <span class="product-brand text-muted small">{{ product.brand }}</span>
+                <span class="product-category badge bg-light text-dark ms-2">{{ product.category }}</span>
+            </div>
+            <h5 class="product-name fw-bold text-dark mb-2">{{ product.name }}</h5>
+            <p class="product-description text-muted small flex-grow-1 mb-3">{{ product.description }}</p>
+            <div class="product-footer d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center gap-2">
+                    <span class="product-price fw-bold fs-5 text-primary">${{ product.price }}</span>
+                    {% if product.stock > 0 %}
+                        <span class="stock-badge badge bg-success-subtle text-success-emphasis px-3 py-1">
+                            <i class="bi bi-check-circle-fill me-1"></i>In Stock ({{ product.stock }})
+                        </span>
+                    {% else %}
+                        <span class="stock-badge badge bg-danger-subtle text-danger-emphasis px-3 py-1">
+                            <i class="bi bi-x-circle-fill me-1"></i>Out of Stock
+                        </span>
+                    {% endif %}
+                </div>
+                <button class="btn btn-primary btn-sm btn-add-cart" data-product-id="{{ product.id }}">
+                    <i class="bi bi-cart-plus me-1"></i>Add to Cart
+                </button>
+            </div>
+        </div>
+    </div>
+    {% endmacro %}
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold text-primary" href="{{ url_for('index') }}">
+                <i class="bi bi-lightning-charge-fill me-2"></i>ShopFlow
+            </a>
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item">
+                        <a class="nav-link fw-medium text-dark" href="#featured">Featured</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link fw-medium text-dark" href="#products">All Products</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link fw-medium text-dark" href="#categories">Categories</a>
+                    </li>
+                    <li class="nav-item ms-lg-3">
+                        <a class="btn btn-primary px-4 py-2 fw-medium" href="#cart">
+                            <i class="bi bi-cart3 me-1"></i> Cart
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Banner -->
+    <section class="hero-banner">
+        <div class="container">
+            <div class="row align-items-center min-vh-50">
+                <div class="col-lg-7">
+                    <div class="hero-content">
+                        <span class="hero-badge">New Arrivals & Exclusive Deals</span>
+                        <h1 class="display-3 fw-bold text-white mb-3">Premium Electronics for Modern Living</h1>
+                        <p class="lead text-white-50 mb-4">Discover cutting-edge technology from world-class brands. Curated selection, competitive prices, exceptional service.</p>
+                        <div class="d-flex flex-wrap gap-3">
+                            <a href="#products" class="btn btn-light btn-lg px-5 fw-medium">Shop Now</a>
+                            <a href="#featured" class="btn btn-outline-light btn-lg px-5 fw-medium">View Featured</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-5 d-none d-lg-block">
+                    <div class="hero-visual text-center">
+                        <div class="hero-image-container">
+                            <i class="bi bi-cpu-fill hero-icon"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="hero-wave"></div>
+    </section>
+
+    <!-- Search Bar (Visual Only) -->
+    <section class="search-section py-4 bg-white border-bottom">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8 col-xl-6">
+                    <div class="search-wrapper">
+                        <div class="input-group input-group-lg shadow-sm">
+                            <span class="input-group-text bg-white border-end-0">
+                                <i class="bi bi-search text-muted"></i>
+                            </span>
+                            <input type="text" class="form-control border-start-0 bg-white" placeholder="Search products, brands, categories..." aria-label="Search">
+                            <span class="input-group-text bg-white border-start-0">
+                                <i class="bi bi-sliders text-muted"></i>
+                            </span>
+                        </div>
+                        <div class="search-tags mt-3">
+                            <span class="text-muted small me-2">Popular:</span>
+                            <a href="#" class="badge bg-light text-dark text-decoration-none me-2 px-3 py-2">Keyboards</a>
+                            <a href="#" class="badge bg-light text-dark text-decoration-none me-2 px-3 py-2">Laptops</a>
+                            <a href="#" class="badge bg-light text-dark text-decoration-none me-2 px-3 py-2">Audio</a>
+                            <a href="#" class="badge bg-light text-dark text-decoration-none me-2 px-3 py-2">Monitors</a>
+                            <a href="#" class="badge bg-light text-dark text-decoration-none px-3 py-2">Accessories</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Products Section -->
+    <section id="featured" class="py-5 bg-light">
+        <div class="container">
+            <div class="row mb-5">
+                <div class="col-12 text-center">
+                    <span class="section-badge">Featured Products</span>
+                    <h2 class="display-5 fw-bold text-dark mt-2 mb-2">Top Picks This Week</h2>
+                    <p class="text-muted lead">Hand-selected electronics offering exceptional value and performance</p>
+                </div>
+            </div>
+            <div class="row g-4" id="featured-products">
+                {% for product in featured_products %}
+                <div class="col-12 col-sm-6 col-lg-3">
+                    {{ product_card(product, featured=True) }}
+                </div>
+                {% endfor %}
+            </div>
+            <div class="text-center mt-5">
+                <a href="#products" class="btn btn-outline-primary btn-lg px-5 fw-medium">View All Products</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- All Products Section -->
+    <section id="products" class="py-5 bg-white">
+        <div class="container">
+            <div class="row mb-5">
+                <div class="col-12 text-center">
+                    <span class="section-badge">Our Catalogue</span>
+                    <h2 class="display-5 fw-bold text-dark mt-2 mb-2">All Products</h2>
+                    <p class="text-muted lead">Explore our complete range of premium electronics</p>
+                </div>
+            </div>
+            
+            <!-- Category Filter -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="d-flex flex-wrap justify-content-center gap-2" id="category-filters">
+                        <button class="btn btn-primary category-filter active" data-category="all">All Products</button>
+                        {% for category in categories %}
+                        <button class="btn btn-outline-primary category-filter" data-category="{{ category }}">{{ category }}</button>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product Grid -->
+            <div class="row g-4" id="product-grid">
+                {% for product in products %}
+                <div class="col-12 col-sm-6 col-lg-4 col-xl-3 product-item" data-category="{{ product.category }}">
+                    {{ product_card(product) }}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <!-- Categories Section -->
+    <section id="categories" class="py-5 bg-light">
+        <div class="container">
+            <div class="row mb-5">
+                <div class="col-12 text-center">
+                    <span class="section-badge">Shop by Category</span>
+                    <h2 class="display-5 fw-bold text-dark mt-2 mb-2">Explore Categories</h2>
+                    <p class="text-muted lead">Find exactly what you're looking for</p>
+                </div>
+            </div>
+            <div class="row g-4">
+                {% for category in categories %}
+                <div class="col-6 col-md-4 col-lg-2">
+                    <a href="#products" class="category-card text-decoration-none" data-category="{{ category }}">
+                        <div class="category-icon">
+                            {{ category_icons[category] }}
+                        </div>
+                        <h5 class="category-name mt-3 mb-1">{{ category }}</h5>
+                        <p class="category-count text-muted small mb-0">{{ category_counts[category] }} products</p>
+                    </a>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <!-- Trust Indicators -->
+    <section class="py-5 bg-white border-top border-bottom">
+        <div class="container">
+            <div class="row g-4 text-center">
+                <div class="col-12 col-md-3">
+                    <div class="trust-item p-4">
+                        <div class="trust-icon mb-3"><i class="bi bi-truck fs-1 text-primary"></i></div>
+                        <h5 class="fw-bold mb-2">Free Shipping</h5>
+                        <p class="text-muted small mb-0">On orders over $99</p>
+                    </div>
+                </div>
+                <div class="col-12 col-md-3">
+                    <div class="trust-item p-4">
+                        <div class="trust-icon mb-3"><i class="bi bi-shield-check fs-1 text-primary"></i></div>
+                        <h5 class="fw-bold mb-2">Secure Payment</h5>
+                        <p class="text-muted small mb-0">100% protected checkout</p>
+                    </div>
+                </div>
+                <div class="col-12 col-md-3">
+                    <div class="trust-item p-4">
+                        <div class="trust-icon mb-3"><i class="bi bi-arrow-return-left fs-1 text-primary"></i></div>
+                        <h5 class="fw-bold mb-2">Easy Returns</h5>
+                        <p class="text-muted small mb-0">30-day return policy</p>
+                    </div>
+                </div>
+                <div class="col-12 col-md-3">
+                    <div class="trust-item p-4">
+                        <div class="trust-icon mb-3"><i class="bi bi-headset fs-1 text-primary"></i></div>
+                        <h5 class="fw-bold mb-2">24/7 Support</h5>
+                        <p class="text-muted small mb-0">Dedicated customer care</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Newsletter Signup -->
+    <section class="py-5 bg-primary">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8 text-center">
+                    <h2 class="display-6 fw-bold text-white mb-3">Stay Updated</h2>
+                    <p class="text-white-50 lead mb-4">Subscribe to our newsletter for exclusive deals, new arrivals, and tech insights.</p>
+                    <form class="row g-3 justify-content-center" id="newsletter-form">
+                        <div class="col-12 col-md-8">
+                            <input type="email" class="form-control form-control-lg" placeholder="Enter your email address" aria-label="Email" required>
+                        </div>
+                        <div class="col-12 col-md-4">
+                            <button type="submit" class="btn btn-light btn-lg w-100 fw-bold">Subscribe</button>
+                        </div>
+                    </form>
+                    <p class="text-white-50 small mt-3 mb-0">No spam, unsubscribe anytime.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer bg-dark text-white py-5">
+        <div class="container">
+            <div class="row g-5">
+                <div class="col-lg-4 col-md-6">
+                    <div class="footer-brand mb-4">
+                        <a class="navbar-brand fw-bold text-white fs-3" href="{{ url_for('index') }}">
+                            <i class="bi bi-lightning-charge-fill me-2 text-primary"></i>ShopFlow
+                        </a>
+                        <p class="text-white-50">Premium electronics storefront delivering cutting-edge technology from world-class brands. Quality guaranteed.</p>
+                        <div class="social-links mt-4">
+                            <a href="#" class="text-white-50 me-3 fs-5" aria-label="Twitter"><i class="bi bi-twitter-x"></i></a>
+                            <a href="#" class="text-white-50 me-3 fs-5" aria-label="LinkedIn"><i class="bi bi-linkedin"></i></a>
+                            <a href="#" class="text-white-50 me-3 fs-5" aria-label="GitHub"><i class="bi bi-github"></i></a>
+                            <a href="#" class="text-white-50 fs-5" aria-label="Discord"><i class="bi bi-discord"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-6">
+                    <h5 class="fw-bold mb-4">Shop</h5>
+                    <ul class="list-unstyled footer-links">
+                        <li class="mb-2"><a href="#products" class="text-white-50 text-decoration-none">All Products</a></li>
+                        <li class="mb-2"><a href="#featured" class="text-white-50 text-decoration-none">Featured</a></li>
+                        <li class="mb-2"><a href="#categories" class="text-white-50 text-decoration-none">Categories</a></li>
+                        <li class="mb-2"><a href="#" class="text-white-50 text-decoration-none">New Arrivals</a></li>
+                        <li class="mb-2"><a href="#" class="text-white-50 text-decoration-none">Best Sellers</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2 col-md-6">
+                    <h5 class="fw-bold mb-4">Support</h5>
+                    <ul class="list-unstyled footer-links">
+                        <li class="mb-2"><a href="#" class="text-white-50 text-decoration-none">Contact Us</a></li>
+                        <li class="mb-2"><a href="#" class="text-white-50 text-decoration-none">FAQs</a></li>
+                        <li class="mb-2"><a href="#" class="text-white-50 text-decoration-none">Shipping Info</a></li>
+                        <li class="mb-2"><a href="#" class="text-white-50 text-decoration-none">Returns Policy</a></li>
+                        <li class="mb-2"><a href="#" class="text-white-50 text-decoration-none">Warranty</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2 col-md-6">
+                    <h5 class="fw-bold mb-4">Company</h5>
+                    <ul class="list-unstyled footer-links">
+                        <li class="mb-2"><a href="#" class="text-white-50 text-decoration-none">About Us</a></li>
+                        <li class="mb-2"><a href="#" class="text-white-50 text-decoration-none">Careers</a></li>
+                        <li class="mb-2"><a href="#" class="text-white-50 text-decoration-none">Press</a></li>
+                        <li class="mb-2"><a href="#" class="text-white-50 text-decoration-none">Blog</a></li>
+                        <li class="mb-2"><a href="#" class="text-white-50 text-decoration-none">Partners</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2 col-md-6">
+                    <h5 class="fw-bold mb-4">Legal</h5>
+                    <ul class="list-unstyled footer-links">
+                        <li class="mb-2"><a href="#" class="text-white-50 text-decoration-none">Privacy Policy</a></li>
+                        <li class="mb-2"><a href="#" class="text-white-50 text-decoration-none">Terms of Service</a></li>
+                        <li class="mb-2"><a href="#" class="text-white-50 text-decoration-none">Cookie Policy</a></li>
+                        <li class="mb-2"><a href="#" class="text-white-50 text-decoration-none">Accessibility</a></li>
+                    </ul>
+                </div>
+            </div>
+            <hr class="border-secondary my-5">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <p class="text-white-50 small mb-0">&copy; 2024 ShopFlow Electronics. All rights reserved.</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <div class="payment-methods">
+                        <i class="bi bi-credit-card-2-front fs-4 text-white-50 me-2"></i>
+                        <i class="bi bi-credit-card-2-back fs-4 text-white-50 me-2"></i>
+                        <i class="bi bi-paypal fs-4 text-white-50 me-2"></i>
+                        <i class="bi bi-apple fs-4 text-white-50 me-2"></i>
+                        <i class="bi bi-google-play fs-4 text-white-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, Response, g, request
+from flask import Flask, jsonify, Response, g, request, render_template
 from prometheus_client import Counter, Histogram, generate_latest, CONTENT_TYPE_LATEST
 import time
 import requests
@@ -169,6 +169,43 @@ PRODUCTS = {
         "description": "7-in-1 USB-C hub for laptops and tablets."
     }
 }
+
+# Index route - renders the main storefront page
+@app.get("/")
+def index():
+    products_list = list(PRODUCTS.values())
+
+    # Get unique categories
+    categories = sorted(set(p["category"] for p in products_list))
+
+    # Category icons mapping
+    category_icons = {
+        "Keyboards": '<i class="bi bi-keyboard fs-1"></i>',
+        "Mice": '<i class="bi bi-mouse fs-1"></i>',
+        "Laptops": '<i class="bi bi-laptop fs-1"></i>',
+        "Storage": '<i class="bi bi-hdd-stack fs-1"></i>',
+        "Audio": '<i class="bi bi-headphones fs-1"></i>',
+        "Webcams": '<i class="bi bi-camera-video fs-1"></i>',
+        "Monitors": '<i class="bi bi-display fs-1"></i>',
+        "Accessories": '<i class="bi bi-usb-plug fs-1"></i>',
+    }
+
+    # Category counts
+    category_counts = {}
+    for cat in categories:
+        category_counts[cat] = sum(1 for p in products_list if p["category"] == cat)
+
+    # Featured products (first 4)
+    featured_products = products_list[:4]
+
+    return render_template("index.html",
+        products=products_list,
+        featured_products=featured_products,
+        categories=categories,
+        category_icons=category_icons,
+        category_counts=category_counts
+    )
+
 REQUEST_COUNT = Counter(
     'http_requests_total',
     'Total HTTP requests',

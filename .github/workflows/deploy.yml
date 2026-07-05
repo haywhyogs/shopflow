@@ -83,7 +83,6 @@ jobs:
                   break
                 fi
                 sleep 15
-              done
 
               curl -s -X POST \
                 http://admin:\${GRAFANA_PASSWORD}@localhost:3000/api/dashboards/import \
