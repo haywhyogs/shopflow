@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex">
+    <title>Shopping Cart | ShopFlow Electronics</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        .cart-item-image {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+            background: var(--gray-50);
+            border-radius: var(--radius);
+        }
+        .quantity-input {
+            width: 70px;
+        }
+        .btn-continue-shopping {
+            padding: 1rem 2rem;
+            font-size: 1.125rem;
+            font-weight: 500;
+            border-radius: var(--radius);
+        }
+        .btn-checkout {
+            padding: 1rem 2rem;
+            font-size: 1.125rem;
+            font-weight: 600;
+            border-radius: var(--radius);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold text-primary" href="{{ url_for('index') }}">
+                <i class="bi bi-lightning-charge-fill me-2"></i>ShopFlow
+            </a>
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item">
+                        <a class="nav-link fw-medium text-dark" href="#featured">Featured</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link fw-medium text-dark" href="#products">All Products</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link fw-medium text-dark" href="#categories">Categories</a>
+                    </li>
+                    <li class="nav-item ms-lg-3">
+                        <a class="btn btn-primary px-4 py-2 fw-medium position-relative" href="{{ url_for('view_cart') }}">
+                            <i class="bi bi-cart3 me-1"></i> Cart
+                            {% if cart_item_count and cart_item_count > 0 %}
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                {{ cart_item_count }}
+                            </span>
+                            {% endif %}
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Flash Messages -->
+    <div class="container mt-3">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ 'danger' if category == 'danger' else 'success' if category == 'success' else 'warning' if category == 'warning' else 'info' }} alert-dismissible fade show shadow-sm" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+
+    <!-- Cart Content -->
+    <main class="py-5 bg-light">
+        <div class="container">
+            {% if empty %}
+            <!-- Empty Cart State -->
+            <div class="row justify-content-center">
+                <div class="col-12 col-lg-8">
+                    <div class="text-center py-5">
+                        <div class="mb-4">
+                            <i class="bi bi-cart-x fs-1 text-muted"></i>
+                        </div>
+                        <h2 class="fw-bold text-dark mb-2">Your cart is empty</h2>
+                        <p class="text-muted mb-4">Looks like you haven't added any products yet.</p>
+                        <a href="{{ url_for('index') }}" class="btn btn-primary btn-continue-shopping">
+                            <i class="bi bi-arrow-left me-2"></i>Continue Shopping
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <!-- Cart with Items -->
+            <div class="row g-4">
+                <!-- Cart Items -->
+                <div class="col-12 col-lg-8">
+                    <div class="card shadow-sm border-0">
+                        <div class="card-header bg-white border-0 py-3">
+                            <h5 class="fw-bold text-dark mb-0">Shopping Cart ({{ cart_items|length }} items)</h5>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="table-responsive">
+                                <table class="table table-hover align-middle mb-0">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th class="ps-3">Product</th>
+                                            <th class="text-center" style="width: 100px;">Price</th>
+                                            <th class="text-center" style="width: 130px;">Quantity</th>
+                                            <th class="text-end" style="width: 140px;">Total</th>
+                                            <th class="text-end pe-3" style="width: 60px;"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for item in cart_items %}
+                                        <tr>
+                                            <td class="ps-3">
+                                                <div class="d-flex align-items-center gap-3">
+                                                    <img src="{{ url_for('static', filename='images/' + item.product.image) }}"
+                                                         alt="{{ item.product.name }}"
+                                                         class="cart-item-image"
+                                                         loading="lazy">
+                                                    <div>
+                                                        <div class="fw-medium text-dark">{{ item.product.name }}</div>
+                                                        <div class="small text-muted">ID: {{ item.product.id }}</div>
+                                                        {% if not item.in_stock %}
+                                                        <span class="badge bg-danger-subtle text-danger-emphasis mt-1">
+                                                            <i class="bi bi-x-circle-fill me-1"></i>Out of Stock
+                                                        </span>
+                                                        {% elif item.available_stock < item.quantity %}
+                                                        <span class="badge bg-warning-subtle text-warning-emphasis mt-1">
+                                                            <i class="bi bi-exclamation-triangle-fill me-1"></i>Limited Stock ({{ item.available_stock }} left)
+                                                        </span>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="text-center text-muted">${{ "%.2f"|format(item.product.price) }}</td>
+                                            <td class="text-center">
+                                                <form action="{{ url_for('update_cart', product_id=item.product.id) }}" method="POST" class="d-inline">
+                                                    <input type="number" name="quantity" value="{{ item.quantity }}" min="0" max="{{ item.available_stock }}" class="form-control form-control-sm quantity-input text-center" {% if not item.in_stock %}disabled{% endif %}>
+                                                </form>
+                                            </td>
+                                            <td class="text-end fw-bold text-primary pe-3">${{ "%.2f"|format(item.line_total) }}</td>
+                                            <td class="text-end pe-3">
+                                                <form action="{{ url_for('remove_from_cart', product_id=item.product.id) }}" method="POST" class="d-inline">
+                                                    <button type="submit" class="btn btn-link text-danger p-0" aria-label="Remove {{ item.product.name }}">
+                                                        <i class="bi bi-trash fs-5"></i>
+                                                    </button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Continue Shopping -->
+                    <div class="text-center mt-4">
+                        <a href="{{ url_for('index') }}" class="btn btn-outline-primary btn-continue-shopping">
+                            <i class="bi bi-arrow-left me-2"></i>Continue Shopping
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Order Summary -->
+                <div class="col-12 col-lg-4">
+                    <div class="card shadow-sm border-0 sticky-top" style="top: 100px;">
+                        <div class="card-header bg-white border-0 py-3">
+                            <h5 class="fw-bold text-dark mb-0">Order Summary</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="text-muted">Subtotal</span>
+                                <span class="fw-medium">${{ "%.2f"|format(grand_total) }}</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="text-muted">Shipping</span>
+                                <span class="fw-medium text-success">Free</span>
+                            </div>
+                            <hr class="my-2">
+                            <div class="d-flex justify-content-between mb-4">
+                                <span class="fw-bold fs-5">Total</span>
+                                <span class="fw-bold fs-5 text-primary">${{ "%.2f"|format(grand_total) }}</span>
+                            </div>
+
+                            <form action="{{ url_for('place_order') }}" method="POST">
+                                <button type="submit" class="btn btn-primary btn-checkout w-100">
+                                    <i class="bi bi-lock-fill me-2"></i>Proceed to Checkout
+                                </button>
+                            </form>
+
+                            <div class="text-center mt-3">
+                                <small class="text-muted">
+                                    <i class="bi bi-shield-check me-1"></i>Secure checkout
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer bg-dark text-white py-5">
+        <div class="container">
+            <div class="row g-5">
+                <div class="col-lg-4 col-md-6">
+                    <div class="footer-brand mb-4">
+                        <a class="navbar-brand fw-bold text-white fs-3" href="{{ url_for('index') }}">
+                            <i class="bi bi-lightning-charge-fill me-2 text-primary"></i>ShopFlow
+                        </a>
+                        <p class="text-white-50">Premium electronics storefront delivering cutting-edge technology from world-class brands. Quality guaranteed.</p>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-6">
+                    <h5 class="fw-bold mb-4">Shop</h5>
+                    <ul class="list-unstyled footer-links">
+                        <li class="mb-2"><a href="#products" class="text-white-50 text-decoration-none">All Products</a></li>
+                        <li class="mb-2"><a href="#featured" class="text-white-50 text-decoration-none">Featured</a></li>
+                        <li class="mb-2"><a href="#categories" class="text-white-50 text-decoration-none">Categories</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2 col-md-6">
+                    <h5 class="fw-bold mb-4">Support</h5>
+                    <ul class="list-unstyled footer-links">
+                        <li class="mb-2"><a href="#" class="text-white-50 text-decoration-none">Contact Us</a></li>
+                        <li class="mb-2"><a href="#" class="text-white-50 text-decoration-none">FAQs</a></li>
+                        <li class="mb-2"><a href="#" class="text-white-50 text-decoration-none">Shipping Info</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2 col-md-6">
+                    <h5 class="fw-bold mb-4">Company</h5>
+                    <ul class="list-unstyled footer-links">
+                        <li class="mb-2"><a href="#" class="text-white-50 text-decoration-none">About Us</a></li>
+                        <li class="mb-2"><a href="#" class="text-white-50 text-decoration-none">Careers</a></li>
+                        <li class="mb-2"><a href="#" class="text-white-50 text-decoration-none">Press</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2 col-md-6">
+                    <h5 class="fw-bold mb-4">Legal</h5>
+                    <ul class="list-unstyled footer-links">
+                        <li class="mb-2"><a href="#" class="text-white-50 text-decoration-none">Privacy Policy</a></li>
+                        <li class="mb-2"><a href="#" class="text-white-50 text-decoration-none">Terms of Service</a></li>
+                    </ul>
+                </div>
+            </div>
+            <hr class="border-secondary my-5">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <p class="text-white-50 small mb-0">&copy; 2024 ShopFlow Electronics. All rights reserved.</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <div class="payment-methods">
+                        <i class="bi bi-credit-card-2-front fs-4 text-white-50 me-2"></i>
+                        <i class="bi bi-credit-card-2-back fs-4 text-white-50 me-2"></i>
+                        <i class="bi bi-paypal fs-4 text-white-50 me-2"></i>
+                        <i class="bi bi-apple fs-4 text-white-50 me-2"></i>
+                        <i class="bi bi-google-play fs-4 text-white-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

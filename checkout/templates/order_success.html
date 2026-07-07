@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex">
+    <title>Order Confirmed | ShopFlow Electronics</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        .order-success-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #10b981, #059669);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+        }
+        .order-success-icon i {
+            font-size: 2.5rem;
+            color: white;
+        }
+        .order-number {
+            font-family: 'Monospace', monospace;
+            letter-spacing: 0.1em;
+            background: var(--gray-100);
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius);
+            display: inline-block;
+            font-size: 1.125rem;
+        }
+        .order-item-image {
+            width: 60px;
+            height: 60px;
+            object-fit: contain;
+            background: var(--gray-50);
+            border-radius: var(--radius);
+        }
+        .btn-continue-shopping {
+            padding: 1rem 2.5rem;
+            font-size: 1.125rem;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold text-primary" href="{{ url_for('index') }}">
+                <i class="bi bi-lightning-charge-fill me-2"></i>ShopFlow
+            </a>
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item">
+                        <a class="nav-link fw-medium text-dark" href="#featured">Featured</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link fw-medium text-dark" href="#products">All Products</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link fw-medium text-dark" href="#categories">Categories</a>
+                    </li>
+                    <li class="nav-item ms-lg-3">
+                        <a class="btn btn-primary px-4 py-2 fw-medium" href="{{ url_for('view_cart') }}">
+                            <i class="bi bi-cart3 me-1"></i> Cart
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Flash Messages -->
+    <div class="container mt-3">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ 'danger' if category == 'danger' else 'success' if category == 'success' else 'warning' if category == 'warning' else 'info' }} alert-dismissible fade show shadow-sm" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+
+    <!-- Order Success Content -->
+    <main class="py-5 bg-light">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-12 col-lg-10 col-xl-8">
+                    <!-- Success Header -->
+                    <div class="text-center mb-5">
+                        <div class="order-success-icon">
+                            <i class="bi bi-check-circle-fill"></i>
+                        </div>
+                        <h1 class="display-4 fw-bold text-dark mb-2">Order Confirmed!</h1>
+                        <p class="lead text-muted">Thank you for your purchase. Your order has been placed successfully.</p>
+                    </div>
+
+                    <!-- Order Details Card -->
+                    <div class="card shadow-sm border-0 mb-4">
+                        <div class="card-header bg-white border-0 py-3">
+                            <h5 class="fw-bold text-dark mb-0">Order Details</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row g-3 mb-4">
+                                <div class="col-12 col-md-6">
+                                    <label class="form-label text-muted small fw-medium">Order Number</label>
+                                    <div class="order-number text-primary fw-bold">{{ order_number }}</div>
+                                </div>
+                                <div class="col-12 col-md-6">
+                                    <label class="form-label text-muted small fw-medium">Order Date</label>
+                                    <div class="fw-medium text-dark">{{ order_date }}</div>
+                                </div>
+                            </div>
+
+                            <!-- Order Items Table -->
+                            <div class="table-responsive">
+                                <table class="table table-hover align-middle mb-0">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th class="ps-3">Product</th>
+                                            <th class="text-center" style="width: 80px;">Qty</th>
+                                            <th class="text-end" style="width: 120px;">Price</th>
+                                            <th class="text-end pe-3" style="width: 140px;">Total</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for item in order_items %}
+                                        <tr>
+                                            <td class="ps-3">
+                                                <div class="d-flex align-items-center gap-3">
+                                                    <img src="{{ url_for('static', filename='images/' + item.product_image) }}"
+                                                         alt="{{ item.product_name }}"
+                                                         class="order-item-image"
+                                                         loading="lazy">
+                                                    <div>
+                                                        <div class="fw-medium text-dark">{{ item.product_name }}</div>
+                                                        <div class="small text-muted">ID: {{ item.product_id }}</div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="text-center fw-medium">{{ item.quantity }}</td>
+                                            <td class="text-end text-muted">${{ "%.2f"|format(item.price) }}</td>
+                                            <td class="text-end fw-bold text-primary pe-3">${{ "%.2f"|format(item.line_total) }}</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <!-- Totals -->
+                            <div class="row mt-4">
+                                <div class="col-12 col-md-6 offset-md-6">
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <span class="text-muted">Subtotal</span>
+                                        <span class="fw-medium">${{ "%.2f"|format(grand_total) }}</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <span class="text-muted">Shipping</span>
+                                        <span class="fw-medium text-success">Free</span>
+                                    </div>
+                                    <hr class="my-2">
+                                    <div class="d-flex justify-content-between">
+                                        <span class="fw-bold fs-5">Total</span>
+                                        <span class="fw-bold fs-5 text-primary">${{ "%.2f"|format(grand_total) }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Notification Status -->
+                    {% if notification_errors %}
+                    <div class="alert alert-warning border-0 shadow-sm mb-4" role="alert">
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="bi bi-exclamation-triangle-fill fs-4"></i>
+                            <div>
+                                <strong>{{ notification_message }}</strong>
+                                <div class="small text-muted mt-1">
+                                    Some order notifications could not be sent for: {{ notification_errors | join(', ') }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="alert alert-success border-0 shadow-sm mb-4" role="alert">
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="bi bi-check-circle-fill fs-4"></i>
+                            <div>
+                                <strong>{{ notification_message }}</strong>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Continue Shopping -->
+                    <div class="text-center">
+                        <a href="{{ url_for('index') }}" class="btn btn-primary btn-continue-shopping">
+                            <i class="bi bi-arrow-left me-2"></i>Continue Shopping
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer bg-dark text-white py-5">
+        <div class="container">
+            <div class="row g-5">
+                <div class="col-lg-4 col-md-6">
+                    <div class="footer-brand mb-4">
+                        <a class="navbar-brand fw-bold text-white fs-3" href="{{ url_for('index') }}">
+                            <i class="bi bi-lightning-charge-fill me-2 text-primary"></i>ShopFlow
+                        </a>
+                        <p class="text-white-50">Premium electronics storefront delivering cutting-edge technology from world-class brands. Quality guaranteed.</p>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-6">
+                    <h5 class="fw-bold mb-4">Shop</h5>
+                    <ul class="list-unstyled footer-links">
+                        <li class="mb-2"><a href="#products" class="text-white-50 text-decoration-none">All Products</a></li>
+                        <li class="mb-2"><a href="#featured" class="text-white-50 text-decoration-none">Featured</a></li>
+                        <li class="mb-2"><a href="#categories" class="text-white-50 text-decoration-none">Categories</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2 col-md-6">
+                    <h5 class="fw-bold mb-4">Support</h5>
+                    <ul class="list-unstyled footer-links">
+                        <li class="mb-2"><a href="#" class="text-white-50 text-decoration-none">Contact Us</a></li>
+                        <li class="mb-2"><a href="#" class="text-white-50 text-decoration-none">FAQs</a></li>
+                        <li class="mb-2"><a href="#" class="text-white-50 text-decoration-none">Shipping Info</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2 col-md-6">
+                    <h5 class="fw-bold mb-4">Company</h5>
+                    <ul class="list-unstyled footer-links">
+                        <li class="mb-2"><a href="#" class="text-white-50 text-decoration-none">About Us</a></li>
+                        <li class="mb-2"><a href="#" class="text-white-50 text-decoration-none">Careers</a></li>
+                        <li class="mb-2"><a href="#" class="text-white-50 text-decoration-none">Press</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2 col-md-6">
+                    <h5 class="fw-bold mb-4">Legal</h5>
+                    <ul class="list-unstyled footer-links">
+                        <li class="mb-2"><a href="#" class="text-white-50 text-decoration-none">Privacy Policy</a></li>
+                        <li class="mb-2"><a href="#" class="text-white-50 text-decoration-none">Terms of Service</a></li>
+                    </ul>
+                </div>
+            </div>
+            <hr class="border-secondary my-5">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <p class="text-white-50 small mb-0">&copy; 2024 ShopFlow Electronics. All rights reserved.</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <div class="payment-methods">
+                        <i class="bi bi-credit-card-2-front fs-4 text-white-50 me-2"></i>
+                        <i class="bi bi-credit-card-2-back fs-4 text-white-50 me-2"></i>
+                        <i class="bi bi-paypal fs-4 text-white-50 me-2"></i>
+                        <i class="bi bi-apple fs-4 text-white-50 me-2"></i>
+                        <i class="bi bi-google-play fs-4 text-white-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>
