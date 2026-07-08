@@ -6,14 +6,17 @@
 ![Prometheus](https://img.shields.io/badge/Metrics-Prometheus-E6522C)
 ![Grafana](https://img.shields.io/badge/Observability-Grafana-F46800)
 
-A production-style e-commerce backend built to demonstrate end-to-end cloud
-observability, infrastructure automation, and incident response on Azure.
+A production-style cloud-native e-commerce application built to demonstrate
+end-to-end observability, infrastructure automation, and incident response on
+Azure. ShopFlow combines a working customer-facing storefront with a complete
+observability stack, giving equal weight to the application experience and
+the operational visibility behind it.
 
-Three Flask microservices — catalogue, checkout, and notifications — are fully
+Three Flask microservices — catalogue, checkout, and notifications, are fully
 instrumented with metrics, distributed tracing, and structured logging. The
 system is deployed to Azure via Terraform, updated through a GitHub Actions
-CI/CD pipeline, and monitored through a complete observability stack that
-surfaces issues across all three layers simultaneously.
+CI/CD pipeline, and monitored through an observability stack that surfaces
+issues across all three layers simultaneously.
 
 ---
 
@@ -21,17 +24,30 @@ surfaces issues across all three layers simultaneously.
 
 ![ShopFlow architecture](images/architecture/shopflow_architecture.png)
 
-Checkout is the only publicly exposed service. Catalogue and notifications are
+Checkout is the only publicly exposed service and it serves both the customer
+storefront and the order processing API. Catalogue and notifications are
 internal, reachable only within the Docker bridge network. All three services
 emit metrics, traces, and logs independently — Grafana, Jaeger, and Loki
 provide three distinct lenses on the same system behaviour.
+
+```
+Browser
+    │
+    ▼
+Checkout (Public Web UI + Order Processing)
+    │
+    ├────────► Catalogue (internal — product data)
+    │
+    └────────► Notifications (internal — order events)
+```
+
 
 ---
 
 ## Tech stack
 
 **Services**
-- Python · Flask · Docker · Docker Compose
+- Python · Flask · Bootstrap · Docker · Docker Compose
 
 **Observability**
 - Prometheus — metrics collection and SLO-based alerting
@@ -53,6 +69,33 @@ provide three distinct lenses on the same system behaviour.
 
 ---
 
+## Storefront
+
+The Checkout service exposes a responsive customer-facing storefront built
+with Bootstrap. Rather than exposing Catalogue publicly, Checkout retrieves
+product data from Catalogue over the internal Docker network — keeping
+Catalogue private while serving a complete shopping experience.
+
+![ShopFlow storefront](images/storefront/storefront-homepage.png)
+
+Features include:
+
+- Product catalogue with search and category filtering
+- Product detail pages with stock badges and specifications
+- Shopping cart with quantity updates and order total
+- Stock validation before checkout
+- Responsive layout across device sizes
+
+![ShopFlow product page](images/storefront/product-detail.png)
+
+This keeps the architecture aligned with microservice principles: Catalogue
+owns product data, Checkout owns presentation and order logic, Notifications
+handles order events. The Checkout service acts as the presentation layer,
+retrieving all product information from Catalogue using internal service
+discovery (`http://catalogue:5001`) — a single source of truth for inventory.
+
+---
+
 ## Local setup
 
 **Prerequisites:** Docker, Docker Compose, Python 3.11
@@ -67,12 +110,13 @@ Services available locally:
 
 | Service | URL |
 |---|---|
-| Checkout (public entry) | http://localhost:6002 |
+| Storefront | http://localhost:6002 |
 | Grafana | http://localhost:3000 |
 | Prometheus | http://localhost:9090 |
 | Jaeger | http://localhost:16686 |
 
-Test the end-to-end flow:
+Open `http://localhost:6002` in a browser to explore the storefront. To test
+the API flow directly:
 
 ```bash
 curl http://localhost:6002/checkout/1
@@ -81,7 +125,6 @@ curl http://localhost:6002/checkout/1
 Catalogue validates the product, checkout processes the order, notifications
 receives the event. All three are visible in Jaeger as a single distributed
 trace.
-
 ---
 
 ## Observability stack
@@ -260,8 +303,8 @@ changes to the alerting configuration.
 
 **Checkout as the only public endpoint** — catalogue and notifications have no
 host port mapping. Internal traffic uses Docker DNS resolution by service name.
-This mirrors production patterns where internal services are not publicly
-addressable.
+The storefront retrieves product data from Catalogue internally, keeping a
+single source of truth while exposing only one entry point publicly.
 
 **User-assigned Managed Identity over system-assigned** — system-assigned
 identity is tied to the VM lifecycle. Deleting and recreating the VM requires
@@ -330,14 +373,16 @@ format and forward alerts to an email or Teams channel with structured message c
 
 ```
 shopflow/
-├── catalogue/              Flask service — product catalogue
-├── checkout/               Flask service — order processing (public entry)
-├── notifications/          Flask service — order notifications
+├── catalogue/              Flask service — product catalogue (internal)
+├── checkout/               Flask service — public storefront + order processing
+│   ├── templates/          HTML templates (Bootstrap UI)
+│   └── static/             CSS, JS, images
+├── notifications/          Flask service — order notification events
 ├── prometheus/
 │   ├── prometheus.yml      Scrape configuration
 │   └── alerts.yml          SLO-based alert rules
 ├── grafana/
-│   ├── dashboards/         Dashboard JSON (auto-provisioned)
+│   ├── dashboards/         Dashboard JSON
 │   └── provisioning/       Datasource and dashboard provider config
 ├── promtail/               Log shipping configuration
 ├── terraform/              All Azure infrastructure as code
